@@ -72,3 +72,20 @@ def plot_trial_raster(block, trial_num=0):
     ax.set_ylim([-1, len(sts) + 5])
     ax.set_ylabel('Neu idx')
     ax.set_xlabel('Time ({})'.format(sts[0].units))
+
+
+
+
+def rasterize_data(data_block, sf = 1.e3):
+    n_trials = len(data_block.segments)
+    n_units = len(data_block.segments[0].spiketrains)
+    time_bins = np.arange(0., 6., 1/sf)
+
+    spike_matrix = np.zeros((n_trials, n_units, (len(time_bins))))
+
+    for i in range(n_trials):
+        for j in range(n_units):
+            index = np.digitize(np.array(data_block.segments[i].spiketrains[j]), time_bins)
+            spike_matrix[i,j,index] = 1
+
+    return spike_matrix
