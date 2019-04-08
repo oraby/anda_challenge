@@ -74,6 +74,18 @@ def plot_trial_raster(block, trial_num=0):
     ax.set_xlabel('Time ({})'.format(sts[0].units))
 
 
+def make_lists_of_spike_trains(data_block):
+    n_trials = len(data_block.segments)
+    n_units = len(data_block.segments[0].spiketrains)
+
+    output = list()
+    for i in range(n_trials):
+        l = list()
+        for j in range(n_units):
+            l.append(np.array(data_block.segments[i].spiketrains[j]))
+        output.append(l)
+
+    return output
 
 
 def rasterize_data(data_block, sf = 1.e3):
