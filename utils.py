@@ -18,6 +18,7 @@ def load_dataset(color, path=None):
         log.info("loading apth from datapath.txt")
         f = open("datapath.txt", "r")
         path = f.read()
+        path = path.strip()
 
     return np.load(path + '{}.npy'.format(color)).item()
 
