@@ -99,3 +99,16 @@ def rasterize_data(data_block, sf = 1.e3):
             spike_matrix[i,j,index] = 1
 
     return spike_matrix
+
+def make_lists_of_isi(data_block):
+    n_trials = len(data_block.segments)
+    n_units = len(data_block.segments[0].spiketrains)
+
+    output = list()
+    for i in range(n_trials):
+        l = list()
+        for j in range(n_units):
+            l.append(np.diff(data_block.segments[i].spiketrains[j]))
+        output.append(l)
+
+    return output
