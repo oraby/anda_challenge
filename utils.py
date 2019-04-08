@@ -104,11 +104,12 @@ def make_lists_of_isi(data_block):
     n_trials = len(data_block.segments)
     n_units = len(data_block.segments[0].spiketrains)
 
-    output = list()
     for i in range(n_trials):
-        l = list()
         for j in range(n_units):
-            l.append(np.diff(data_block.segments[i].spiketrains[j]))
-        output.append(l)
+            spike_times = data_block.segments[i].spiketrains[j].as_array()
+            if i == j == 0:
+                output = np.diff(spike_times)
+            else:
+                output = np.concatenate((output, np.diff(spike_times)))
 
     return output
