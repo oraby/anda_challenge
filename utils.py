@@ -1,3 +1,4 @@
+import os
 import neo
 import quantities as pq
 import numpy as np
@@ -12,21 +13,53 @@ import misc
 
 log = logging.getLogger(__name__)
 
-def load_dataset(color, path=None):
+list_of_data_sets = ['blue', 'green', 'grey', 'orange', 'purple', 'red']
+DUMP_DIR="dumps"
+PLOTS_DIR="plots"
+
+_all_data = {}
+def load_dataset(colors=list_of_data_sets, path=None):
     """
     color: string, name of data set
     path: path to the data
 
     returns a neo block
     """
+    # Colors was initially used for a single color, convert to list to avoid
+    # breaking code
+    if type(colors) == str:
+        return_single = True
+        log.info('Use `load_dataset(["' + colors +'"])` instead of' + \
+                 '`load_dataset("' + colors +'")`')
+        colors = [colors]
+    else:
+        return_single = False
 
-    if path is None:
-        log.info("loading apth from datapath.txt")
-        f = open("datapath.txt", "r")
-        path = f.read()
-        path = path.strip()
+    return_list = []
+    for color in colors:
+        if color in _all_data:
+            return_list.append(_all_data[color]['neo_block'])
+        else:
+            if path is None:
+                log.info("loading path from datapath.txt")
+                f = open("datapath.txt", "r")
+                path = f.read()
+                path = path.strip()
+            neo_block = np.load(path + '{}.npy'.format(color)).item()
+            _all_data[color] = {'neo_block': neo_block}
+            return_list.append(neo_block)
 
-    return np.load(path + '{}.npy'.format(color)).item()
+    if return_single: # if the caller passed a non-list then return such
+        return return_list[0]
+    else:
+        return return_list
+
+def createIfNotExistDirs(dirs):
+    for dir in dirs:
+        if not os.path.exists(dir):
+            print("Creating " + dir + " directory")
+            os.mkdir(dir)
+
 
 def plot_trial_raster(block, trial_num=0, ax=None):
     """
