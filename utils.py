@@ -2,9 +2,10 @@ import neo
 import quantities as pq
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.signal as ss
 import logging
-log = logging.getLogger(__name__)
 
+log = logging.getLogger(__name__)
 
 def load_dataset(color, path=None):
     """
@@ -113,3 +114,49 @@ def make_lists_of_isi(data_block):
                 output = np.concatenate((output, np.diff(spike_times)))
 
     return output
+
+def calculate_single_trial_PSTH(R, fs=None, win_size=None, window='triangle'):
+    """
+    Estimates single trial PSTH by convolving the binned spik train with a
+    normalized window
+
+    Input:
+        R: Trials X Neuron X Time numpy array
+        fs: Sampling rate (in Hz)
+        win_size: Width of filter window in ms. If none, defaults to 10 times the
+                bin size (1 / sampling rate)
+        window: Type of filter window (triangle or boxcar). Default is triangle
+
+    Return:
+        R: Trial X Neuron X Time numpy array of firing rates (spk / s)
+    """
+
+    if fs is None:
+        raise ValueError("Must specify a sampling rate")
+
+    if win_size is None:
+        win_size = 10
+    else:
+        samps_per_ms = int((1 / fs) * 1000)
+        win_size = int(samps_per_ms * win_size)
+
+    log.info("Using window size: {} ms".format(win_size))
+
+    n_trials = R.shape[0]
+
+    if window == 'triangle':
+        window = ss.triang(M=win_size) / (win_size / 2)
+    elif window == 'boxcar':
+        window = ss.boxcar(M=win_size) / win_size
+    else:
+        "{} is not a valid type of window".format(window)
+
+    for trial in range(n_trials):
+        r = R[trial, :, :]
+        r_psth = ss.filtfilt(window, 1, r, axis=-1)
+        R[trial, :, :] = r_psth
+
+    # convert to spike / sec
+    R = R * fs
+
+    return R
