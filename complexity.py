@@ -18,15 +18,16 @@ def complexity(color, trial, bins, path_to_misc):
     import elephant.unitary_event_analysis as ue
     import elephant.spike_train_generation as stocmod
     import elephant.spade as spade
-    sys.path.append(path)
+    sys.path.append(path_to_misc)
     import misc
     import matplotlib.pyplot as plt
     import neo
+    import utils as ut
 
     data_block = ut.load_dataset(color, path=None)
     train = data_block.segments[trial].spiketrains # segments is trials
 
-    binsize = bins
+    binsize = bins * pq.ms
     pophist = stats.time_histogram(train, binsize, binary=True)
     complexity_cpp = stats.complexity_pdf(train, binsize)
     # Plot the results
@@ -49,7 +50,7 @@ def complexity(color, trial, bins, path_to_misc):
     surr_sts = []
 
     for st in train:
-    surr_sts.append(surr.randomise_spikes(st)[0])
+        surr_sts.append(surr.randomise_spikes(st)[0])
 
     # Computation of the Complexity Distributions
     complexity_surr = stats.complexity_pdf(surr_sts, binsize)
@@ -82,20 +83,20 @@ def complexity(color, trial, bins, path_to_misc):
                 diff_complexity.magnitude))
 
     for i, h in enumerate(binsizes[1:]):
-    complexity_cpp = stats.complexity_pdf(train, h)
-    complexity_surr = stats.complexity_pdf(surr_sts, h)
-    diff_complexity = complexity_cpp - complexity_surr
-    max2.append(numpy.argmax(
-        diff_complexity.magnitude[numpy.argmin(
-            diff_complexity.magnitude):]) + numpy.argmin(
-                diff_complexity.magnitude))
+        complexity_cpp = stats.complexity_pdf(train, h)
+        complexity_surr = stats.complexity_pdf(surr_sts, h)
+        diff_complexity = complexity_cpp - complexity_surr
+        max2.append(numpy.argmax(
+            diff_complexity.magnitude[numpy.argmin(
+                diff_complexity.magnitude):]) + numpy.argmin(
+                    diff_complexity.magnitude))
 
-    complexity_cpp_matrix = numpy.hstack(
-        (complexity_cpp_matrix, complexity_cpp.magnitude))
-    complexity_surr_matrix = numpy.hstack(
-        (complexity_surr_matrix, complexity_surr.magnitude))
-    diff_complexity_matrix = numpy.hstack(
-        (diff_complexity_matrix, diff_complexity.magnitude))
+        complexity_cpp_matrix = numpy.hstack(
+            (complexity_cpp_matrix, complexity_cpp.magnitude))
+        complexity_surr_matrix = numpy.hstack(
+            (complexity_surr_matrix, complexity_surr.magnitude))
+        diff_complexity_matrix = numpy.hstack(
+            (diff_complexity_matrix, diff_complexity.magnitude))
 
     # Plot the complexity matrices
     inch2cm = 0.3937
@@ -142,4 +143,3 @@ def complexity(color, trial, bins, path_to_misc):
     plt.xlim([0,complexity_cpp_matrix.T.shape[1]])
     plt.ylim([0,complexity_cpp_matrix.T.shape[0]])
     plt.ylim([binsizes[0], binsizes[-1]])
-
