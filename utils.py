@@ -160,3 +160,23 @@ def calculate_single_trial_PSTH(R, fs=None, win_size=None, window='triangle'):
     R = R * fs
 
     return R
+
+def get_event_time(neo_block, event_name=None):
+    """
+    Return array of time the event occured during the experiment
+    """
+
+    if event_name is None:
+        raise ValueError("Must specify event name!")
+
+    for j, trial in enumerate(range(len(neo_block.segments))):
+        trial_events = neo_block.segments[trial].events[0]
+        ev_names = np.array(trial_events.annotations['trial_event_labels'])
+        ev_time = np.array([np.float(e) for e in trial_events.times])
+
+        if j == 0:
+            times = ev_time[ev_names==event_name]
+        else:
+            times = np.concatenate((times, ev_time[ev_names==event_name]))
+
+    return times
