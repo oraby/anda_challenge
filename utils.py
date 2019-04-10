@@ -28,7 +28,7 @@ def load_dataset(color, path=None):
 
     return np.load(path + '{}.npy'.format(color)).item()
 
-def plot_trial_raster(block, trial_num=0):
+def plot_trial_raster(block, trial_num=0, ax=None):
     """
     Given a neo block, and trial number, plot the raster plot for all recorded
     units on this trial.
@@ -57,7 +57,8 @@ def plot_trial_raster(block, trial_num=0):
         'belongs_to_trialtype']
 
     # Raster plot
-    f, ax = plt.subplots(1, 1)
+    if ax is None:
+        f, ax = plt.subplots(1, 1)
     markersize = 1
 
     # Plotting the spikes
