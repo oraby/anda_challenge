@@ -6,6 +6,7 @@ import scipy.signal as ss
 from elephant.conversion import BinnedSpikeTrain
 from elephant.spike_train_correlation import cross_correlation_histogram
 import quantities as pq
+import copy as cp
 import logging
 
 log = logging.getLogger(__name__)
@@ -242,3 +243,23 @@ def get_sig_corr_mask(R, n_neurons, n_trials):
         count = count + (cc > true_cc)
 
     return count / niters
+
+
+def sort_spiketrains(block):
+    sorted_block = cp.deepcopy(block)
+    ntrials = block.size['segments']
+    nunits = len(block.segments[0].spiketrains)
+
+    for t in range(ntrials):
+        order = np.zeros((nunits,1))
+        for u in range(nunits):
+            channel = block.segments[t].spiketrains[u].annotations['connector_aligned_id']
+            unit_id = block.segments[t].spiketrains[u].annotations['unit_id']
+            order[u] = int(channel)*100+int(unit_id)
+
+        order = np.argsort(order.squeeze())
+
+
+        sorted_block.segments[t].spiketrains = np.array(block.segments[t].spiketrains)[order].tolist()
+
+    return sorted_block
