@@ -93,7 +93,7 @@ def make_lists_of_spike_trains(data_block):
 def rasterize_data(data_block, sf = 1.e3):
     n_trials = len(data_block.segments)
     n_units = len(data_block.segments[0].spiketrains)
-    time_bins = np.arange(0., 6., 1/sf)
+    time_bins = np.arange(0., 4., 1/sf)
 
     spike_matrix = np.zeros((n_trials, n_units, (len(time_bins))))
 
@@ -190,12 +190,12 @@ def pairwise_cch(neo_block, unit1=0, unit2=1, binsize=5):
     return times, np.mean(CCH, axis=-1)
 
 
-def array_locations(block,t):
+def array_locations(block):
     """
-    Return a list of electrodes for each unit and a matrix of the 
+    Return a list of electrodes for each unit and a matrix of the
     distances between electrodes from which units were recorded
     """
-    nunits = len(block.segments[t].spiketrains) 
+    nunits = len(block.segments[0].spiketrains)
     ntrials = len(block.segments)
     # get array of unit location
     unit_location = np.zeros((nunits,2))
@@ -203,8 +203,8 @@ def array_locations(block,t):
         # first column: unit number
         unit_location[i,0] = i+1
         # electrode number
-        unit_location[i,1] = block.segments[t].spiketrains[i].annotations['connector_aligned_id']
-    
+        unit_location[i,1] = block.segments[0].spiketrains[i].annotations['connector_aligned_id']
+
     # matrix of distances between units
     matrix = np.zeros((nunits,nunits))
     for i in range(nunits):
@@ -218,4 +218,3 @@ def array_locations(block,t):
             matrix[j,i] = distance
 
     return unit_location, matrix
-
