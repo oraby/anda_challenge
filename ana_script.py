@@ -16,8 +16,6 @@ for color in ut.list_of_data_sets:
             all_data[color] = pickle.load(f)
     else:
         print('Processing '+str(color)+' data set')
-
-        individual_data_set = dict()
         #Read in raw data
         data_block = ut.load_dataset(color, path=None)
         #ut.load_dataset() creates an entry in all_data for the color
@@ -29,10 +27,10 @@ for color in ut.list_of_data_sets:
 
         print("Dumping data to disk for future quick loading times")
         with open(data_path, 'wb') as f:
-            pickle.dump(individual_data_set, f)
+            pickle.dump(all_data[color], f)
 
 fns = [
-  #(compute_isi_fits, [all_data], {}),
+  (compute_isi_fits, [all_data], {}),
 ]
 
 if __name__ == "__main__":
