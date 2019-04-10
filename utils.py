@@ -129,7 +129,7 @@ def make_lists_of_spike_trains(data_block):
 def rasterize_data(data_block, sf = 1.e3):
     n_trials = len(data_block.segments)
     n_units = len(data_block.segments[0].spiketrains)
-    time_bins = np.arange(0., 4., 1/sf)
+    time_bins = np.arange(0., 5., 1/sf)
 
     spike_matrix = np.zeros((n_trials, n_units, (len(time_bins))))
 
@@ -137,7 +137,7 @@ def rasterize_data(data_block, sf = 1.e3):
         for j in range(n_units):
             index = np.digitize(np.array(data_block.segments[i].spiketrains[j]), time_bins)
             if len(index) > 0:
-                if index[-1] == spike_matrix.shape[-1]:
+                if index[-1] >= spike_matrix.shape[-1]:
                     index = index[:-1]
             spike_matrix[i,j,index] = 1
 
@@ -179,9 +179,13 @@ def calculate_single_trial_PSTH(R, fs=None, win_size=None, window='triangle'):
     if win_size is None:
         win_size = 10
     else:
-        samps_per_ms = int((1 / fs) * 1000)
-        win_size = int(samps_per_ms * win_size)
+        samps_per_ms = int(fs * 1000)
+        win_size = int(np.ceil((1 / samps_per_ms) * win_size))
 
+    if win_size == 1:
+        win_size += 1
+
+    print("window size {}".format(win_size))
     log.info("Using window size: {} ms".format(win_size))
 
     n_trials = R.shape[0]
@@ -335,18 +339,20 @@ def ue_analysis(block, unit1 = 0, unit2 = 1):
 
 
 def get_event_dict(block, fs):
-    block = ut.sort_spiketrains(block, fs=1000)
+    block = sort_spiketrains(block)
 
     events = ['TS-ON', 'CUE-ON', 'GO-ON', 'SR', 'RW-ON']
 
     ntrials = len(block.segments)
-    time_bins = np.arange(0., 4., 1/fs)
+    time_bins = np.arange(0., 5., 1/fs)
     event_dict = {}
 
     for ev in events:
         event_dict[ev] = np.zeros((ntrials, len(time_bins)))
         for t in range(ntrials):
             idx = np.argwhere(np.array(block.segments[t].events[0].annotations['trial_event_labels'])==ev)[0][0]
-            ev_time = np.float(block.segments[i].events[0].times[idx])
+            ev_time = np.float(block.segments[t].events[0].times[idx])
             indexes = np.digitize(ev_time, time_bins)
             event_dict[ev][t, indexes] = 1
+
+    return event_dict
