@@ -16,6 +16,7 @@ B = {}
 for c in list_of_data_sets:
     print("preprocessing: {}".format(c))
     block = ut.load_dataset(c)
+    block = ut.sort_spiketrains(block)
     B[c] = block
     r = ut.rasterize_data(block, sf=50)
     r = ut.calculate_single_trial_PSTH(r, fs=50)
