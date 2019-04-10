@@ -188,3 +188,34 @@ def pairwise_cch(neo_block, unit1=0, unit2=1, binsize=5):
     times = times
 
     return times, np.mean(CCH, axis=-1)
+
+
+def array_locations(block,t):
+    """
+    Return a list of electrodes for each unit and a matrix of the 
+    distances between electrodes from which units were recorded
+    """
+    nunits = len(block.segments[t].spiketrains) 
+    ntrials = len(block.segments)
+    # get array of unit location
+    unit_location = np.zeros((nunits,2))
+    for i in range(nunits):
+        # first column: unit number
+        unit_location[i,0] = i+1
+        # electrode number
+        unit_location[i,1] = block.segments[t].spiketrains[i].annotations['connector_aligned_id']
+    
+    # matrix of distances between units
+    matrix = np.zeros((nunits,nunits))
+    for i in range(nunits):
+        for j in range(nunits):
+            electrode1 = unit_location[i,1]
+            electrode2 = unit_location[j,1]
+            x_dist = abs(electrode1%10 - electrode2%10)
+            y_dist = abs(np.floor(electrode2/10) - np.floor(electrode1/10))
+            distance = np.sqrt(x_dist**2 + y_dist**2)
+            matrix[i,j] = distance
+            matrix[j,i] = distance
+
+    return unit_location, matrix
+
