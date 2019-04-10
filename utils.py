@@ -14,6 +14,7 @@ import misc
 log = logging.getLogger(__name__)
 
 list_of_data_sets = ['blue', 'green', 'grey', 'orange', 'purple', 'red']
+COLORS = list_of_data_sets # Creating an alias for clarity
 DUMP_DIR="dumps"
 PLOTS_DIR="plots"
 
