@@ -21,7 +21,7 @@ def compute_isi_fits(all_data):
 	def exp_func(x, a, b, c):
     	return a * np.exp(-b * x) + c
 
-		def gamma_func(x, a, b, c, d, e):
+	def gamma_func(x, a, b, c, d, e):
     	res = e * gamma.pdf(x, a, loc=0, scale=c) + d
     	return res
 
