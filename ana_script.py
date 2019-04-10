@@ -6,8 +6,13 @@ list_of_data_sets = ['blue', 'green', 'grey', 'orange', 'purple', 'red']
 
 all_data = dict()
 
+DUMP_DIR="dumps"
+if not os.path.exists(DUMP_DIR):
+    print("Creating " + DUMP_DIR + " directory")
+    os.mkdir(DUMP_DIR)
+
 for color in list_of_data_sets:
-    data_path = "dumps/" + color + ".pickle"
+    data_path = DUMP_DIR + "/" + color + ".pickle"
     if os.path.exists(data_path):
         print("Loading dumped data from", data_path)
         with open(data_path, 'rb') as f:
