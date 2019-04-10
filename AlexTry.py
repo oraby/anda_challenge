@@ -22,3 +22,5 @@ for a in ax:
     a.set_xlim(0, 0.05)
 
 ax[1].legend(loc='lower right')
+
+plt.show()

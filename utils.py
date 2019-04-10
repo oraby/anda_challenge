@@ -3,6 +3,9 @@ import quantities as pq
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal as ss
+from elephant.conversion import BinnedSpikeTrain
+from elephant.spike_train_correlation import cross_correlation_histogram
+import quantities as pq
 import logging
 
 log = logging.getLogger(__name__)
@@ -40,7 +43,7 @@ def plot_trial_raster(block, trial_num=0):
     sts = block.filter(
         targdict={'trial_id': seg_idx}, objects=neo.Segment)[0].spiketrains
 
-    # Get the list of events of the trial
+    # Get the list of evens of the trial
     events = block.filter(
         targdict={'trial_id': seg_idx}, objects=neo.Segment)[0].events[0]
     # List of events labels that we want to plot
@@ -161,22 +164,27 @@ def calculate_single_trial_PSTH(R, fs=None, win_size=None, window='triangle'):
 
     return R
 
-def get_event_time(neo_block, event_name=None):
+def pairwise_cch(neo_block, unit1=0, unit2=1, binsize=5):
     """
-    Return array of time the event occured during the experiment
+    Return cross correlation histogram between unit1 and unit2 in the neoblock.
+    Computes this over each trial independently, then takes the mean over trials
     """
 
-    if event_name is None:
-        raise ValueError("Must specify event name!")
+    for i, trial in enumerate(range(len(neo_block.segments))):
+        st1 = neo_block.segments[trial].spiketrains[unit1]
+        st2 = neo_block.segments[trial].spiketrains[unit2]
+        bst1 = BinnedSpikeTrain(st1, binsize=binsize*pq.ms)
+        bst2 = BinnedSpikeTrain(st2, binsize=binsize*pq.ms)
 
-    for j, trial in enumerate(range(len(neo_block.segments))):
-        trial_events = neo_block.segments[trial].events[0]
-        ev_names = np.array(trial_events.annotations['trial_event_labels'])
-        ev_time = np.array([np.float(e) for e in trial_events.times])
+        cch = cross_correlation_histogram(bst1, bst2, border_correction=True)
+        times = cch[1]
+        cch = cch[0].as_array()
 
-        if j == 0:
-            times = ev_time[ev_names==event_name]
+        if i == 0:
+            CCH = cch
         else:
-            times = np.concatenate((times, ev_time[ev_names==event_name]))
+            CCH = np.concatenate((CCH, cch), axis=-1)
 
-    return times
+    times = times
+
+    return times, np.mean(CCH, axis=-1)
