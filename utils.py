@@ -46,6 +46,8 @@ def load_dataset(colors=list_of_data_sets, path=None):
                 f = open("datapath.txt", "r")
                 path = f.read()
                 path = path.strip()
+            else:
+                log.info("Loading data for {} from {}".format(color, path))
             neo_block = np.load(path + '{}.npy'.format(color)).item()
             _all_data[color] = {'neo_block': neo_block}
             return_list.append(neo_block)
