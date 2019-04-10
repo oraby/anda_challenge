@@ -1,26 +1,54 @@
-import utils as ut
 import matplotlib.pyplot as plt
+import numpy as np
 
-# load and calculate the ISIs
-list_of_data_sets = ['blue', 'green', 'grey', 'orange', 'purple', 'red']
-ISIs = {}
-for i, color in enumerate(list_of_data_sets):
-    log.info("loading and plotting ISI for {}".format(color))
-    data_block = ut.load_dataset(color)
-    isi = ut.make_lists_of_isi(data_block)
-    ISIs[color] = isi
+from scipy.optimize import curve_fit
+from scipy.stats import chisquare
+from scipy.stats import gamma
 
 
-f, ax = plt.subplots(1, 2)
-for d in list_of_data_sets:
-    ax[0].hist(ISIs[d], histtype='step', density=1, cumulative=False, bins=10000, label=d)
-    ax[1].hist(ISIs[d], histtype='step', density=1, cumulative=True, bins=100000, label=d)
+def exp_func(x, a, b, c):
+    return a * np.exp(-b * x) + c
+
+def gamma_func(x, a, b, c, d, e):
+    res = e * gamma.pdf(x, a, loc=0, scale=c) + d
+    return res
+
+def compute_isi_fits(all_data):
+    plt.xkcd()
+    plt.figure(figsize=(10, 10))
+    for d in all_data:
+        bins = np.linspace(0, 0.05, 50)
+        bins = 2500
+        h = plt.hist(all_data[d]['isi'], histtype='step', density=1, cumulative=False, bins=bins, label=d, color=d)
+        H = h[0]
+        b = (h[1][:-1]+h[1][1:]) / 2.
+        popt, pcov = curve_fit(exp_func, b, H)
+        plt.plot(b, exp_func(b, *popt), color=d, ls=':')
+        all_data[d]['exp_diff_fit'] = np.sum((H - exp_func(b, *popt))**2.)
+
+        popt, pcov = curve_fit(gamma_func, b, H)
+        plt.plot(b, gamma_func(b, *popt), color=d, ls='--')
+        all_data[d]['gamma_diff_fit'] = np.sum((H - gamma_func(b, *popt))**2.)
+
+    plt.xlim(0, 0.1)
+    plt.ylim(1.e0, None)
+    plt.legend(loc='best')
+    plt.show()
 
 
-for a in ax:
-    a.semilogy()
-    a.set_xlim(0, 0.05)
 
-ax[1].legend(loc='lower right')
+    plt.figure()
+    for i, d in enumerate(all_data):
+        plt.bar(i, all_data[d]['exp_diff_fit'], color=d)
+    plt.ylabel(r'$L_2$ error')
+    plt.xticks([])
+    plt.yticks([])
+    plt.show()
 
-plt.show()
+    plt.figure()
+    for i, d in enumerate(all_data):
+        plt.bar(i, all_data[d]['gamma_diff_fit'], color=d)
+    plt.ylabel(r'$L_2$ error')
+    plt.xticks([])
+    plt.yticks([])
+    plt.show()
