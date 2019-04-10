@@ -1,7 +1,7 @@
 
-def complexity(color, trial, bins, path_to_misc):
+def complexity(all_data,color, trial, bin_size):
     """
-    Give color as a string, trial as a scalar, bins as a scalar, and path_to_misc as the full path to
+    Give all_data, color as a string, trial as a scalar, bins as a scalar, and path_to_misc as the full path to
     wherever you have SGexercises/misc.py
     Plots: raster plot, spike counts per bin (in ms), the complexity distribution for that bin size,
     complexity distribution for data vs. surrogates, then substracts the two from each other. Finally, three plots
@@ -18,16 +18,14 @@ def complexity(color, trial, bins, path_to_misc):
     import elephant.unitary_event_analysis as ue
     import elephant.spike_train_generation as stocmod
     import elephant.spade as spade
-    sys.path.append(path_to_misc)
     import misc
     import matplotlib.pyplot as plt
     import neo
     import utils as ut
 
-    data_block = ut.load_dataset(color, path=None)
-    train = data_block.segments[trial].spiketrains # segments is trials
-
-    binsize = bins * pq.ms
+    train = all_data[color]['neo_block'].segments[trial].spiketrains # segments is trials
+    
+    binsize = bin_size * pq.ms
     pophist = stats.time_histogram(train, binsize, binary=True)
     complexity_cpp = stats.complexity_pdf(train, binsize)
     # Plot the results
