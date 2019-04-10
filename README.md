@@ -1,4 +1,4 @@
 # anda_challenge
 
 link to the presentation slides on google drive:
-https://drive.google.com/file/d/12iucDXFw0v-WwQE8b0XL_ZPdT-lyHgXu/view?usp=sharing
+https://docs.google.com/presentation/d/1FVqXR2OSbv8kjoKWF5QibldJaq-wjWe5g4iL1Lzc9UQ/edit?usp=sharing
