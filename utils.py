@@ -94,7 +94,7 @@ def make_lists_of_spike_trains(data_block):
 def rasterize_data(data_block, sf = 1.e3):
     n_trials = len(data_block.segments)
     n_units = len(data_block.segments[0].spiketrains)
-    time_bins = np.arange(0., 5., 1/sf)
+    time_bins = np.arange(0., 4., 1/sf)
 
     spike_matrix = np.zeros((n_trials, n_units, (len(time_bins))))
 

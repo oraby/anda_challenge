@@ -10,6 +10,7 @@ var_explained = {}
 for c in list_of_data_sets:
     print("preprocessing {}".format(c))
     block = ut.load_dataset(c)
+    block = ut.sort_spiketrains(block)
     R = ut.rasterize_data(block, sf=100)
     R = ut.calculate_single_trial_PSTH(R, fs=100)
     n_units = R.shape[1]

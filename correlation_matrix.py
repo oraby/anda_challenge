@@ -31,8 +31,8 @@ for i, c in enumerate(list_of_data_sets):
     # sort the units according to electrode distance
 
     sig_mat = ut.get_sig_corr_mask(R[c], R[c].shape[0], 142)
-    sig = sig_mat < 0.05
-    print("% significant: {}".format(sig.sum() / sig.shape[0]))
+    sig = sig_mat < 1 #0.05
+    print("% significant: {0} for c: {1}".format(sig.sum() / sig.shape[0], c))
     cc = np.corrcoef(R[c])
     cc = cc[~np.eye(cc.shape[0],dtype=bool)]
     sig = sig[~np.eye(sig.shape[0],dtype=bool)]
@@ -50,7 +50,7 @@ for i, c in enumerate(list_of_data_sets):
         distance.append(dist)
         cc_bin.append(np.mean(cc[args]))
     #axes[ax[i]].imshow(cc_sorted, aspect='auto', cmap='seismic')
-    ax.plot(distance, cc_bin, color=c)
+    ax.plot(distance, sf.gaussian_filter1d(cc_bin, 3), 'o-', color=c)
 
 f.tight_layout()
 
