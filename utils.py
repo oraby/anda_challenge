@@ -93,13 +93,16 @@ def make_lists_of_spike_trains(data_block):
 def rasterize_data(data_block, sf = 1.e3):
     n_trials = len(data_block.segments)
     n_units = len(data_block.segments[0].spiketrains)
-    time_bins = np.arange(0., 4., 1/sf)
+    time_bins = np.arange(0., 5., 1/sf)
 
     spike_matrix = np.zeros((n_trials, n_units, (len(time_bins))))
 
     for i in range(n_trials):
         for j in range(n_units):
             index = np.digitize(np.array(data_block.segments[i].spiketrains[j]), time_bins)
+            if len(index) > 0:
+                if index[-1] == spike_matrix.shape[-1]:
+                    index = index[:-1]
             spike_matrix[i,j,index] = 1
 
     return spike_matrix
@@ -218,3 +221,24 @@ def array_locations(block):
             matrix[j,i] = distance
 
     return unit_location, matrix
+
+def get_sig_corr_mask(R, n_neurons, n_trials):
+
+    true_cc = np.corrcoef(R)
+
+    # shuffle each unit
+    count = np.zeros(true_cc.shape)
+    niters = 100
+    for i in range(0, niters):
+        r_shuff = R.copy()
+        r_shuff = r_shuff.reshape(n_neurons, n_trials, -1)
+        for unit in range(R.shape[0]):
+            trials = np.arange(0, n_trials)
+            np.random.shuffle(trials)
+            r_shuff[unit, :, :] = r_shuff[unit, trials, :]
+
+        r_shuff = r_shuff.reshape(n_neurons, -1)
+        cc = np.corrcoef(r_shuff)
+        count = count + (cc > true_cc)
+
+    return count / niters
