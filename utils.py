@@ -301,7 +301,7 @@ def ue_analysis(block, unit1 = 0, unit2 = 1):
     misc._plot_UE(spiketrain, UE, significance_level, binsize, winsize, winstep, pattern_hash, N, Js_dict)
 
 
-def get_event_dict(block):
+def get_event_dict(block, fs):
     block = ut.sort_spiketrains(block, fs=1000)
 
     events = ['TS-ON', 'CUE-ON', 'GO-ON', 'SR', 'RW-ON']
