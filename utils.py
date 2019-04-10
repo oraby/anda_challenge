@@ -269,9 +269,9 @@ def ue_analysis(block, unit1 = 0, unit2 = 1):
     """
     copied from Sonja's lecture
     """
-    sts1 = [segment.spiketrains[unit1] for segment in block.segments] 
-    sts2 = [segment.spiketrains[unit2] for segment in block.segments] 
-    
+    sts1 = [segment.spiketrains[unit1] for segment in block.segments]
+    sts2 = [segment.spiketrains[unit2] for segment in block.segments]
+
     spiketrain = [[sts1[i], sts2[i]] for i in range(len(sts1))]
 
     num_trial, N = np.shape(spiketrain)[:2]
@@ -287,14 +287,32 @@ def ue_analysis(block, unit1 = 0, unit2 = 1):
     UE = ue.jointJ_window_analysis(spiketrain, binsize, winsize, winstep, pattern_hash)
 
     # plotting parameters
-    Js_dict = {'events':{'':[]},                                                                                                                                 
-         'save_fig': False,                
-         'path_filename_format':'./UE.pdf',                                                                                                                         
-         'showfig':True,                                                                                                                                
-         'suptitle':True,                                                                                                              
-         'figsize':(10,12),                                                                                                                 
-        'unit_ids':range(1,N+1,1),                                                                                                
-        'fontsize':15,                                                                                             
-        'linewidth':2} 
+    Js_dict = {'events':{'':[]},
+         'save_fig': False,
+         'path_filename_format':'./UE.pdf',
+         'showfig':True,
+         'suptitle':True,
+         'figsize':(10,12),
+        'unit_ids':range(1,N+1,1),
+        'fontsize':15,
+        'linewidth':2}
 
     misc._plot_UE(spiketrain, UE, significance_level, binsize, winsize, winstep, pattern_hash, N, Js_dict)
+
+
+def get_event_dict(block):
+    block = ut.sort_spiketrains(block, fs=1000)
+
+    events = ['TS-ON', 'CUE-ON', 'GO-ON', 'SR', 'RW-ON']
+
+    ntrials = len(block.segments)
+    time_bins = np.arange(0., 4., 1/fs)
+    event_dict = {}
+
+    for ev in events:
+        event_dict[ev] = np.zeros((ntrials, len(time_bins)))
+        for t in range(ntrials):
+            idx = np.argwhere(np.array(block.segments[t].events[0].annotations['trial_event_labels'])==ev)[0][0]
+            ev_time = np.float(block.segments[i].events[0].times[idx])
+            indexes = np.digitize(ev_time, time_bins)
+            event_dict[ev][t, indexes] = 1
