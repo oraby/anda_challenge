@@ -15,6 +15,7 @@ log = logging.getLogger(__name__)
 
 list_of_data_sets = ['blue', 'green', 'grey', 'orange', 'purple', 'red']
 COLORS = list_of_data_sets # Creating an alias for clarity
+trial_events = ['TS-ON', 'CUE-ON', 'GO-ON', 'SR', 'RW-ON']
 DUMP_DIR="dumps"
 PLOTS_DIR="plots"
 
@@ -30,8 +31,6 @@ def load_dataset(colors=list_of_data_sets, path=None):
     # breaking code
     if type(colors) == str:
         return_single = True
-        log.info('Use `load_dataset(["' + colors +'"])` instead of' + \
-                 '`load_dataset("' + colors +'")`')
         colors = [colors]
     else:
         return_single = False
@@ -182,7 +181,7 @@ def calculate_single_trial_PSTH(R, fs=None, win_size=None, window='triangle'):
     if win_size is None:
         win_size = 10
     else:
-        samps_per_ms = int(fs * 1000)
+        samps_per_ms = int(np.ceil(fs / 1000))
         win_size = int(np.ceil((1 / samps_per_ms) * win_size))
 
     if win_size == 1:
