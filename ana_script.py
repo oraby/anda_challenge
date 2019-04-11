@@ -5,7 +5,6 @@ from analysis_functions import compute_isi_fits
 from correlation_matrix import plotCorrelationMatrix, plotCorrelationByDistance
 from complexity import complexity
 from trff import ff_wrapper
-from dPCA_script import compute_dPCA
 
 
 all_data = ut._all_data
@@ -40,9 +39,17 @@ fns = [
   (plotCorrelationByDistance, [ut.list_of_data_sets], {'fs': 50, 'win_size': 0}),
   (plotCorrelationByDistance, [ut.list_of_data_sets], {'fs': 500, 'win_size': 0}),
   (ff_wrapper, [ut.list_of_data_sets,150, None],{}),
-  (compute_dPCA, [ut.list_of_data_sets], {'fs': 100, 'win_size': 200})
 ]
+try: # Not all of us has dPCA installed, it needs manual installation
+    from dPCA_script import compute_dPCA
+except ImportError:
+    pass
+else:
+    print("Imported dPCA")
+    fns.append(
+        (compute_dPCA, [ut.list_of_data_sets], {'fs': 100, 'win_size': 200}))
 
 if __name__ == "__main__":
-    for fn, args, kargs in fns[-1:]:
+    for fn, args, kargs in fns:
+        print("Running", fn.__name__)
         fn(*args, **kargs)

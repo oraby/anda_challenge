@@ -34,7 +34,7 @@ def compute_isi_fits(all_data):
 	for d in all_data:
 		bins = np.linspace(0, 0.2, 200)
 		# bins = 2500
-		h = plt.hist(all_data[d]['isi'], histtype='step', density=1, cumulative=False, bins=bins, label=d, color=d)
+		h = plt.hist(all_data[d]['isi'], histtype='step', density=1, cumulative=False, bins=bins, label=d, color=d, lw=2)
 	# plt.xlim(0, 0.1)
 # 	plt.ylim(1.e0, None)
 	plt.legend(loc='best')
