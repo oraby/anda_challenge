@@ -56,15 +56,14 @@ def computeCorrelationMatrix(colors=ut.COLORS, fs=50, win_size=None, sig=False):
         ax.set_ylabel("Pairwise correlation")
 
     f.tight_layout()
-
+    f.suptitle("samples per sec {}".format(fs))
 
     return corr_mat
 
 
 if __name__ == "__main__":
-    corr_mat = computeCorrelationMatrix(fs=100, win_size=100)
-
-
+    fs = 50
+    corr_mat = computeCorrelationMatrix(fs=fs, win_size=0)
     # plot sorted correlation matrix to look for higher order correlations
     axes = [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2)]
     colors = ut.COLORS[::-1]
@@ -82,7 +81,7 @@ if __name__ == "__main__":
     f1, ax1 = plt.subplots(2, 3)
     for i, a in enumerate(axes):
         cm = corr_mat[colors[i]]
-        Y = sch.linkage((1 - cm).copy(), method='centroid')
+        Y = sch.linkage(cm, method='centroid')
         Z = sch.dendrogram(Y, orientation='right', no_plot=True)
         index = Z['leaves']
         cm = cm[:, index][index, :]
@@ -91,5 +90,6 @@ if __name__ == "__main__":
         im = ax1[a].imshow(cm, aspect='auto', cmap='seismic', vmin=vmin, vmax=vmax)
         ax1[a].set_title(colors[i])
     f1.colorbar(im)
+    f1.suptitle("samples per sec {}".format(fs))
     f1.tight_layout()
     plt.show()

@@ -9,13 +9,12 @@ import utils as ut
 import numpy as np
 import matplotlib.pyplot as plt
 
-def compute_dPCA(colors=ut.list_of_data_sets):
+def compute_dPCA(colors=ut.list_of_data_sets, fs=100, win_size=200):
     print("Loading datasets")
     data = ut.load_dataset(colors)
     for color in colors:
         print("analyzing dataset {}".format(color))
-        win = 500
-        fs = 50
+        win = win_size
         block = data[color]
         #block = ut.sort_spiketrains(block)
         R = ut.rasterize_data(block, sf=fs)
