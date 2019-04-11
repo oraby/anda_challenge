@@ -36,10 +36,10 @@ def load_dataset(colors=list_of_data_sets, path=None):
     else:
         return_single = False
 
-    return_list = []
+    return_dict = {}
     for color in colors:
         if color in _all_data:
-            return_list.append(_all_data[color]['neo_block'])
+            return_dict[color] = _all_data[color]['neo_block']
         else:
             if path is None:
                 log.info("loading path from datapath.txt")
@@ -48,14 +48,14 @@ def load_dataset(colors=list_of_data_sets, path=None):
                 path = path.strip()
             else:
                 log.info("Loading data for {} from {}".format(color, path))
-            neo_block = np.load(path + '{}.npy'.format(color)).item()
+            neo_block = sort_spiketrains(np.load(path + '{}.npy'.format(color)).item())
             _all_data[color] = {'neo_block': neo_block}
-            return_list.append(neo_block)
+            return_dict[color] = neo_block
 
     if return_single: # if the caller passed a non-list then return such
-        return return_list[0]
+        return return_dict[color]
     else:
-        return return_list
+        return return_dict
 
 def createIfNotExistDirs(dirs):
     for dir in dirs:
