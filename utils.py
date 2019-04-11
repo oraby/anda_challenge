@@ -395,6 +395,5 @@ def population_trff(psth,fs = 1.e3, win_size = 10):
     plt.title('Time Resolved Fano Factor')
     plt.xlabel('Time from trial start [ms]')
     plt.ylabel('Fano Factor')
-    plt.show()
 
     return pop_trff, ff
