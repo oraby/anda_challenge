@@ -16,6 +16,7 @@ log = logging.getLogger(__name__)
 list_of_data_sets = ['blue', 'green', 'grey', 'orange', 'purple', 'red']
 COLORS = list_of_data_sets # Creating an alias for clarity
 trial_events = ['TS-ON', 'CUE-ON', 'GO-ON', 'SR', 'RW-ON']
+trial_types = ['PGHF','PGLF','SGLF','SGLF']
 DUMP_DIR="dumps"
 PLOTS_DIR="plots"
 
@@ -369,7 +370,8 @@ def trff(psth):
     return FF
 
 
-def population_trff(psth):
+def population_trff(psth,fs = 1.e3, win_size = 10):
+    win_size = int(np.ceil(fs * (win_size/1000)))
     ntrials = np.shape(psth)[0] 
     nunits = np.shape(psth)[1]
     ntimepoints = np.shape(psth)[2]
@@ -380,7 +382,7 @@ def population_trff(psth):
     
     # cut 500ms from beginning and 1500ms from end
     # to take care of edge effects
-    ff = ff[500:-1500]
+    ff = ff[win_size/2:-win_size/2]
     # replace nans with 0
     #ff[np.isnan(ff)]=0 
     # average across units:
@@ -390,10 +392,9 @@ def population_trff(psth):
     # plotting
     
     plt.figure()
-    plt.plot(range(500,3500),pop_trff)
+    plt.plot(range(len(pop_trff)),pop_trff)
     plt.title('Time Resolved Fano Factor')
     plt.xlabel('Time from trial start [ms]')
     plt.ylabel('Fano Factor')
-    plt.show()
 
     return pop_trff, ff
