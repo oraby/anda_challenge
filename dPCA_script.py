@@ -53,21 +53,43 @@ def compute_dPCA(colors=ut.list_of_data_sets, fs=100, win_size=200):
 
         for comp in R_transform.keys():
             # plot first four PCs for each marginalized component
-            f, ax = plt.subplots(1, 2, figsize=(8, 5))
+            f, ax = plt.subplots(1, 1)
             f.suptitle(comp+", "+color)
 
-            ax[0].set_title(str(dpca.explained_variance_ratio_[comp][0]*100))
-            ax[0].plot(time, R_transform[comp][0, :, :].T)
-            ax[0].legend(un_types)
+            ax.set_title(str(dpca.explained_variance_ratio_[comp][0]*100))
+            ax.plot(time, R_transform[comp][0, :, :].T)
+            ax.legend(un_types)
             for ev in ut.trial_events:
-                ax[0].axvline(events[ev], lw=2, color='k')
-
+                ax.axvline(events[ev], lw=2, color='k')
+            """
             ax[1].set_title(str(dpca.explained_variance_ratio_[comp][1]*100))
             ax[1].plot(time, R_transform[comp][1, :, :].T)
             for ev in ut.trial_events:
                 ax[1].axvline(events[ev], lw=2, color='k')
-
+            """
         f.tight_layout()
+
+        l = []
+        f, ax = plt.subplots(1, 2)
+        for k in R_transform.keys():
+            ax[0].plot(np.cumsum(np.array(dpca.explained_variance_ratio_[k])*100))
+            l.append(k)
+        ax[0].legend(l)
+        ax[0].set_xlabel("PC")
+        ax[0].set_ylabel("% variance explained")
+
+        l = []
+        for k in R_transform.keys():
+            if k != 't':
+                ax[1].plot(np.cumsum(np.array(dpca.explained_variance_ratio_[k])*100))
+                l.append(k)
+        ax[1].legend(l)
+        ax[1].set_xlabel("PC")
+        ax[1].set_ylabel("% variance explained")
+
+        f.suptitle(comp+", "+color)
+        f.tight_layout()
+
 
 if __name__ == "__main__":
     compute_dPCA()
