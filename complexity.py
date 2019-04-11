@@ -1,5 +1,19 @@
+import numpy
+import quantities as pq
+import elephant.spike_train_surrogates as surr
+import elephant.statistics as stats
+import misc
+import matplotlib.pyplot as plt
+import utils as ut
 
-def complexity(color, trial, bin_size, save_figures = True):
+
+def plot_complexity_for_all_colors(all_data, trial, bin_size, save_figures=True):
+
+    for c in all_data:
+        complexity(all_data, c, trial, bin_size, save_figures=True)
+
+
+def complexity(all_data, color, trial, bin_size, save_figures=True):
     """
     Give all_data, color as a string, trial as a scalar, bins as a scalar, default is save_figures = True.
     Plots: raster plot, spike counts per bin (in ms), the complexity distribution for that bin size,
@@ -7,21 +21,29 @@ def complexity(color, trial, bin_size, save_figures = True):
     are created of complexity distributions for data, surrogates, and their difference, scanning across bin sizes
     from 0 to 30 ms.
     """
-    import numpy
-    import quantities as pq
-    import elephant.spike_train_surrogates as surr
-    import elephant.statistics as stats
-    import misc
-    import matplotlib.pyplot as plt
-    import utils as ut
 
-    block = ut.load_dataset(color)
+    if color=='blue':
+        color_map = 'Blues'
+    if color=='green':
+        color_map = 'Greens'
+    if color=='grey':
+        color_map = 'Greys'
+    if color=='orange':
+        color_map = 'Oranges'
+    if color=='purple':
+        color_map = 'Purples'
+    if color=='red':
+        color_map = 'Reds'
+
+    # block = ut.load_dataset(color)
+    block = all_data[color]['neo_block']
     train = block.segments[trial].spiketrains # segments is trials
 
     binsize = bin_size * pq.ms
     pophist = stats.time_histogram(train, binsize, binary=True)
     complexity_cpp = stats.complexity_pdf(train, binsize)
     # Plot the results
+    # plt.xkcd()
     fig = plt.figure(figsize=(12,5))
     fig.subplots_adjust(top=.92, bottom=.05, hspace=.5, wspace=.2)
     misc.add_raster(fig, 2, 2, 1, train, ms=1, xlabel='time', ylabel='neuron id')
@@ -30,7 +52,7 @@ def complexity(color, trial, bin_size, save_figures = True):
     plt.subplot(1,2,2)
     # plt.bar(complexity_cpp.times, list(A) + [0]*(n-assembly_size), color='r', label='amplitude distrib.')
     #plt.bar(range(len(A)), A, color='r', label='amplitude distrib.')
-    plt.plot(complexity_cpp.times, complexity_cpp, label='complexity distrib.')
+    plt.plot(complexity_cpp.times, complexity_cpp, label='complexity distrib.', color=color)
     plt.ylim([0, 0.25])
     plt.xlim([0, 30])
     plt.xlabel('complexity', size=12)
@@ -56,15 +78,15 @@ def complexity(color, trial, bin_size, save_figures = True):
     # Plot the difference of the complexity distributions of the correlated and independent CPP
     plt.figure(figsize = (12,4))
     plt.subplot(1,2,1)
-    plt.plot(complexity_cpp.times, complexity_cpp, color='blue', label="corr'd")
-    plt.plot(complexity_surr.times, complexity_surr, color='red', label="surrogate")
+    plt.plot(complexity_cpp.times, complexity_cpp, color=color, label="corr'd")
+    plt.plot(complexity_surr.times, complexity_surr, color=color, label="surrogate", ls=':')
     plt.xlabel('complexity')
     plt.xlim([0, 30])
     plt.ylabel('probability')
     plt.legend()
 
     plt.subplot(1,2,2)
-    plt.plot(complexity_cpp.times, diff_complexity)
+    plt.plot(complexity_cpp.times, diff_complexity, color=color)
     plt.xlabel('complexity')
     plt.xlim([0, 30])
     plt.ylabel('probability diff.')
@@ -114,7 +136,7 @@ def complexity(color, trial, bin_size, save_figures = True):
 
     plt.subplot(3, 1, 1)
     plt.title('CPP complexity')
-    plt.pcolor(complexity_cpp_matrix.T)
+    plt.pcolor(complexity_cpp_matrix.T, cmap=color_map)
     plt.colorbar()
     plt.tick_params(length=2, direction='out', pad=0)
     plt.yticks(binsizes[0:-1:3].magnitude)
@@ -127,7 +149,7 @@ def complexity(color, trial, bin_size, save_figures = True):
 
     plt.subplot(3, 1, 2)
     plt.title('Surrogate complexity')
-    plt.pcolor(complexity_surr_matrix.T)
+    plt.pcolor(complexity_surr_matrix.T, cmap=color_map)
     plt.colorbar()
     plt.ylabel('Binsize')
     plt.xlabel('Complexity')
@@ -140,7 +162,7 @@ def complexity(color, trial, bin_size, save_figures = True):
 
     plt.subplot(3, 1, 3)
     plt.title('Difference of complexities')
-    plt.pcolor(diff_complexity_matrix.T)
+    plt.pcolor(diff_complexity_matrix.T, cmap=color_map)
     plt.colorbar()
     plt.plot(max2, binsizes, 'm')
     plt.ylabel('Binsize')
@@ -162,4 +184,4 @@ def complexity(color, trial, bin_size, save_figures = True):
 
 
 if __name__ == "__main__":
-    complexity("purple", 0, 2,save_figures = True)
+    complexity("purple", 0, 2)
