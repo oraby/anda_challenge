@@ -8,8 +8,12 @@ import matplotlib.pyplot as plt
 import scipy.ndimage as sf
 import scipy.cluster.hierarchy as sch
 
-def computeCorrelationMatrix(colors=ut.COLORS, fs=50, win_size=None, sig=False):
+def plotCorrelationByDistance(colors=ut.COLORS, **args):
     # compute correlation matrix for range of different time delays
+    fs = args.get('fs', 50)
+    win_size = args.get('win_size', None)
+    sig = args.get('sig', False)
+
     f, ax = plt.subplots(1, 1)
     corr_mat = {}
     for i, c in enumerate(colors):
@@ -61,35 +65,57 @@ def computeCorrelationMatrix(colors=ut.COLORS, fs=50, win_size=None, sig=False):
     return corr_mat
 
 
+def plotCorrelationMatrix(colors=ut.COLORS, **args):
+        fs = args.get('fs', 50)
+        win_size = args.get('win_size', None)
+
+        corr_mat = {}
+        for i, c in enumerate(colors):
+            print("preprocessing: {}".format(c))
+            block = ut.load_dataset(c)
+            r = ut.rasterize_data(block, sf=fs)
+            if win_size == 0:
+                pass
+            else:
+                r = ut.calculate_single_trial_PSTH(r, fs=fs, win_size=win_size)
+            n_units = r.shape[1]
+            r = r.transpose(1, 0, 2).reshape(n_units, -1)
+            print("Calculating...")
+
+            corr_mat[c] = np.corrcoef(r)
+
+            axes = [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2)]
+            colors = ut.COLORS[::-1]
+            vmin = 0
+            vmax = 0
+        for c in colors:
+            min = np.min(corr_mat[c][~np.eye(corr_mat[c].shape[0],dtype=bool)])
+            max = np.max(corr_mat[c][~np.eye(corr_mat[c].shape[0],dtype=bool)])
+
+            if min < vmin:
+                vmin = min
+            if max > vmax:
+                vmax = max
+
+        f1, ax1 = plt.subplots(2, 3)
+        for i, a in enumerate(axes):
+            cm = corr_mat[colors[i]]
+            Y = sch.linkage(cm, method='centroid')
+            Z = sch.dendrogram(Y, orientation='right', no_plot=True)
+            index = Z['leaves']
+            cm = cm[:, index][index, :]
+            # fill diagonal with 0s
+            cm[np.diag_indices(cm.shape[0])] = 0
+            im = ax1[a].imshow(cm, aspect='auto', cmap='seismic', vmin=vmin, vmax=vmax)
+            ax1[a].set_title(colors[i])
+        f1.colorbar(im)
+        f1.suptitle("samples per sec {}".format(fs))
+        f1.tight_layout()
+
+        return corr_mat
+
 if __name__ == "__main__":
     fs = 50
-    corr_mat = computeCorrelationMatrix(fs=fs, win_size=0)
-    # plot sorted correlation matrix to look for higher order correlations
-    axes = [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2)]
-    colors = ut.COLORS[::-1]
-    vmin = 0
-    vmax = 0
-    for c in colors:
-        min = np.min(corr_mat[c][~np.eye(corr_mat[c].shape[0],dtype=bool)])
-        max = np.max(corr_mat[c][~np.eye(corr_mat[c].shape[0],dtype=bool)])
-
-        if min < vmin:
-            vmin = min
-        if max > vmax:
-            vmax = max
-
-    f1, ax1 = plt.subplots(2, 3)
-    for i, a in enumerate(axes):
-        cm = corr_mat[colors[i]]
-        Y = sch.linkage(cm, method='centroid')
-        Z = sch.dendrogram(Y, orientation='right', no_plot=True)
-        index = Z['leaves']
-        cm = cm[:, index][index, :]
-        # fill diagonal with 0s
-        cm[np.diag_indices(cm.shape[0])] = 0
-        im = ax1[a].imshow(cm, aspect='auto', cmap='seismic', vmin=vmin, vmax=vmax)
-        ax1[a].set_title(colors[i])
-    f1.colorbar(im)
-    f1.suptitle("samples per sec {}".format(fs))
-    f1.tight_layout()
+    options = {'fs': fs, 'win_size': 0}
+    corr_mat = plotCorrelationMatrix(**options)
     plt.show()
