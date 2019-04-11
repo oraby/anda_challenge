@@ -22,18 +22,18 @@ def complexity(all_data, color, trial, bin_size, save_figures=True):
     from 0 to 30 ms.
     """
 
-    if color=='blue':
-        color_map = 'Blues'
-    if color=='green':
-        color_map = 'Greens'
-    if color=='grey':
-        color_map = 'Greys'
-    if color=='orange':
-        color_map = 'Oranges'
-    if color=='purple':
-        color_map = 'Purples'
-    if color=='red':
-        color_map = 'Reds'
+#     if color=='blue':
+#         color_map = 'Blues'
+#     if color=='green':
+#         color_map = 'Greens'
+#     if color=='grey':
+#         color_map = 'Greys'
+#     if color=='orange':
+#         color_map = 'Oranges'
+#     if color=='purple':
+#         color_map = 'Purples'
+#     if color=='red':
+#         color_map = 'Reds'
 
     # block = ut.load_dataset(color)
     block = all_data[color]['neo_block']
@@ -60,8 +60,8 @@ def complexity(all_data, color, trial, bin_size, save_figures=True):
     plt.suptitle('train', size=14)
     plt.legend()
     if save_figures:
-        complexity_png = 'plots/complexity_bin' + str(bin_size) + '_color_' + str(color) + '.png'
-        complexity_pdf = 'plots/complexity_bin' + str(bin_size) + '_color_' + str(color) + '.pdf'
+        complexity_png = 'ATplots/complexity_bin' + str(bin_size) + '_color_' + str(color) + '.png'
+        complexity_pdf = 'ATplots/complexity_bin' + str(bin_size) + '_color_' + str(color) + '.pdf'
         plt.savefig(complexity_png)
         plt.savefig(complexity_pdf)
 
@@ -91,8 +91,8 @@ def complexity(all_data, color, trial, bin_size, save_figures=True):
     plt.xlim([0, 30])
     plt.ylabel('probability diff.')
     if save_figures:
-        complexity_surr_png = 'plots/complexity_surr' + str(bin_size) + '_color_' + str(color) + '.png'
-        complexity_surr_pdf = 'plots/complexity_surr' + str(bin_size) + '_color_' + str(color) + '.pdf'
+        complexity_surr_png = 'ATplots/complexity_surr' + str(bin_size) + '_color_' + str(color) + '.png'
+        complexity_surr_pdf = 'ATplots/complexity_surr' + str(bin_size) + '_color_' + str(color) + '.pdf'
         plt.savefig(complexity_surr_png)
         plt.savefig(complexity_surr_pdf)
 
@@ -136,7 +136,7 @@ def complexity(all_data, color, trial, bin_size, save_figures=True):
 
     plt.subplot(3, 1, 1)
     plt.title('CPP complexity')
-    plt.pcolor(complexity_cpp_matrix.T, cmap=color_map)
+    plt.pcolor(complexity_cpp_matrix.T)
     plt.colorbar()
     plt.tick_params(length=2, direction='out', pad=0)
     plt.yticks(binsizes[0:-1:3].magnitude)
@@ -149,7 +149,7 @@ def complexity(all_data, color, trial, bin_size, save_figures=True):
 
     plt.subplot(3, 1, 2)
     plt.title('Surrogate complexity')
-    plt.pcolor(complexity_surr_matrix.T, cmap=color_map)
+    plt.pcolor(complexity_surr_matrix.T)
     plt.colorbar()
     plt.ylabel('Binsize')
     plt.xlabel('Complexity')
@@ -162,7 +162,7 @@ def complexity(all_data, color, trial, bin_size, save_figures=True):
 
     plt.subplot(3, 1, 3)
     plt.title('Difference of complexities')
-    plt.pcolor(diff_complexity_matrix.T, cmap=color_map)
+    plt.pcolor(diff_complexity_matrix.T)
     plt.colorbar()
     plt.plot(max2, binsizes, 'm')
     plt.ylabel('Binsize')
@@ -175,8 +175,8 @@ def complexity(all_data, color, trial, bin_size, save_figures=True):
     plt.ylim([binsizes[0], binsizes[-1]])
 
     if save_figures:
-        sliding_bin_png = 'plots/complexity_sliding_bin_' + str(color) + '.png'
-        sliding_bin_pdf = 'plots/complexity_sliding_bin_' + str(color) + '.pdf'
+        sliding_bin_png = 'ATplots/complexity_sliding_bin_' + str(color) + '.png'
+        sliding_bin_pdf = 'ATplots/complexity_sliding_bin_' + str(color) + '.pdf'
         plt.savefig(sliding_bin_png)
         plt.savefig(sliding_bin_pdf)
 
