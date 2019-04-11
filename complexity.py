@@ -16,7 +16,7 @@ def complexity(color, trial, bin_size):
     import matplotlib.pyplot as plt
     import utils as ut
 
-    block = ut.load_dataset([color])[0]
+    block = ut.load_dataset(color)
     train = block.segments[trial].spiketrains # segments is trials
 
     binsize = bin_size * pq.ms
