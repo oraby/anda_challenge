@@ -1,7 +1,7 @@
 
-def complexity(color, trial, bin_size, save_figures):
+def complexity(color, trial, bin_size, save_figures = True):
     """
-    Give all_data, color as a string, trial as a scalar, bins as a scalar, and choose 'y' or 'n' if you want the plots saved.
+    Give all_data, color as a string, trial as a scalar, bins as a scalar, default is save_figures = True.
     Plots: raster plot, spike counts per bin (in ms), the complexity distribution for that bin size,
     complexity distribution for data vs. surrogates, then substracts the two from each other. Finally, three plots
     are created of complexity distributions for data, surrogates, and their difference, scanning across bin sizes
@@ -37,7 +37,7 @@ def complexity(color, trial, bin_size, save_figures):
     plt.ylabel('probability', size=12)
     plt.suptitle('train', size=14)
     plt.legend()
-    if save_figures == 'y':
+    if save_figures:
         complexity_png = 'plots/complexity_bin' + str(bin_size) + '_color_' + str(color) + '.png'
         complexity_pdf = 'plots/complexity_bin' + str(bin_size) + '_color_' + str(color) + '.pdf'
         plt.savefig(complexity_png)
@@ -68,7 +68,7 @@ def complexity(color, trial, bin_size, save_figures):
     plt.xlabel('complexity')
     plt.xlim([0, 30])
     plt.ylabel('probability diff.')
-    if save_figures == 'y':
+    if save_figures:
         complexity_surr_png = 'plots/complexity_surr' + str(bin_size) + '_color_' + str(color) + '.png'
         complexity_surr_pdf = 'plots/complexity_surr' + str(bin_size) + '_color_' + str(color) + '.pdf'
         plt.savefig(complexity_surr_png)
@@ -151,7 +151,8 @@ def complexity(color, trial, bin_size, save_figures):
     plt.xlim([0, 30])
     plt.ylim([0,complexity_cpp_matrix.T.shape[0]])
     plt.ylim([binsizes[0], binsizes[-1]])
-    if save_figures == 'y':
+    
+    if save_figures:
         sliding_bin_png = 'plots/complexity_sliding_bin_' + str(color) + '.png'
         sliding_bin_pdf = 'plots/complexity_sliding_bin_' + str(color) + '.pdf'
         plt.savefig(sliding_bin_png)
@@ -161,4 +162,4 @@ def complexity(color, trial, bin_size, save_figures):
 
 
 if __name__ == "__main__":
-    complexity("purple", 0, 2)
+    complexity("purple", 0, 2,True)
