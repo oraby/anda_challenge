@@ -37,7 +37,7 @@ def complexity(color, trial, bin_size, save_figures):
     plt.ylabel('probability', size=12)
     plt.suptitle('train', size=14)
     plt.legend()
-    if save_figures == 'y'
+    if save_figures == 'y':
         complexity_png = 'plots/complexity_bin' + str(bin_size) + '_color_' + str(color) + '.png'
         complexity_pdf = 'plots/complexity_bin' + str(bin_size) + '_color_' + str(color) + '.pdf'
         plt.savefig(complexity_png)
@@ -68,7 +68,7 @@ def complexity(color, trial, bin_size, save_figures):
     plt.xlabel('complexity')
     plt.xlim([0, 30])
     plt.ylabel('probability diff.')
-    if save_figures == 'y'
+    if save_figures == 'y':
         complexity_surr_png = 'plots/complexity_surr' + str(bin_size) + '_color_' + str(color) + '.png'
         complexity_surr_pdf = 'plots/complexity_surr' + str(bin_size) + '_color_' + str(color) + '.pdf'
         plt.savefig(complexity_surr_png)
@@ -151,7 +151,7 @@ def complexity(color, trial, bin_size, save_figures):
     plt.xlim([0, 30])
     plt.ylim([0,complexity_cpp_matrix.T.shape[0]])
     plt.ylim([binsizes[0], binsizes[-1]])
-    if save_figures == 'y'
+    if save_figures == 'y':
         sliding_bin_png = 'plots/complexity_sliding_bin_' + str(color) + '.png'
         sliding_bin_pdf = 'plots/complexity_sliding_bin_' + str(color) + '.pdf'
         plt.savefig(sliding_bin_png)
