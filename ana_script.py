@@ -42,5 +42,5 @@ fns = [
 ]
 
 if __name__ == "__main__":
-    for fn, args, kargs in fns[-2:]:
+    for fn, args, kargs in fns:
         fn(*args, **kargs)
