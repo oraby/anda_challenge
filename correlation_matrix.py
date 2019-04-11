@@ -108,14 +108,17 @@ def plotCorrelationMatrix(colors=ut.COLORS, **args):
             cm[np.diag_indices(cm.shape[0])] = 0
             im = ax1[a].imshow(cm, aspect='auto', cmap='seismic', vmin=vmin, vmax=vmax)
             ax1[a].set_title(colors[i])
-        f1.colorbar(im)
+        f1.subplots_adjust(right=0.8)
+        cbar_ax = f1.add_axes([0.85, 0.15, 0.05, 0.7])
+        f1.colorbar(im, cax=cbar_ax)
         f1.suptitle("samples per sec {}".format(fs))
         f1.tight_layout()
 
         return corr_mat
 
 if __name__ == "__main__":
-    fs = 50
+    fs = 500
     options = {'fs': fs, 'win_size': 0}
     corr_mat = plotCorrelationMatrix(**options)
+    plotCorrelationByDistance(**options)
     plt.show()
