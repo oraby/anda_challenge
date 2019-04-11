@@ -8,8 +8,13 @@ import matplotlib.pyplot as plt
 import scipy.ndimage as sf
 import scipy.cluster.hierarchy as sch
 
-def computeCorrelationMatrix(colors=ut.COLORS, fs=50, win_size=None, sig=False):
+def computeCorrelationMatrix(colors=ut.COLORS, **args):
     # compute correlation matrix for range of different time delays
+    print(args)
+    fs = args.get('fs', 50)
+    win_size = args.get('win_size', None)
+    sig = args.get('sig', False)
+
     f, ax = plt.subplots(1, 1)
     corr_mat = {}
     for i, c in enumerate(colors):
@@ -63,7 +68,8 @@ def computeCorrelationMatrix(colors=ut.COLORS, fs=50, win_size=None, sig=False):
 
 if __name__ == "__main__":
     fs = 50
-    corr_mat = computeCorrelationMatrix(fs=fs, win_size=0)
+    options = {'fs': fs, 'win_size': 0}
+    corr_mat = computeCorrelationMatrix(**options)
     # plot sorted correlation matrix to look for higher order correlations
     axes = [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2)]
     colors = ut.COLORS[::-1]
