@@ -357,3 +357,43 @@ def get_event_dict(block, fs):
             event_dict[ev][t, indexes] = 1
 
     return event_dict
+
+
+def trff(psth):
+    """
+    calculate time-resolved fano factor
+    """
+    trial_avg = np.mean(psth,axis=0)
+    trial_var = np.var(psth,axis=0)
+    FF = trial_var/trial_avg
+    return FF
+
+
+def population_trff(psth):
+    ntrials = np.shape(psth)[0] 
+    nunits = np.shape(psth)[1]
+    ntimepoints = np.shape(psth)[2]
+    ff = np.zeros((ntimepoints,nunits))
+    # calculate time-resolved FF for each unit
+    for i in range(nunits):
+        ff[:,i] = trff(psth[:,i,:])
+    
+    # cut 500ms from beginning and 1500ms from end
+    # to take care of edge effects
+    ff = ff[500:-1500]
+    # replace nans with 0
+    #ff[np.isnan(ff)]=0 
+    # average across units:
+    pop_trff = np.nanmean(ff,axis=1)
+    
+
+    # plotting
+    
+    plt.figure()
+    plt.plot(range(500,3500),pop_trff)
+    plt.title('Time Resolved Fano Factor')
+    plt.xlabel('Time from trial start [ms]')
+    plt.ylabel('Fano Factor')
+    plt.show()
+
+    return pop_trff, ff
