@@ -60,7 +60,7 @@ def plotCorrelationByDistance(colors=ut.COLORS, **args):
         ax.set_ylabel("Pairwise correlation")
 
     f.tight_layout()
-    f.suptitle("samples per sec {}".format(fs))
+    f.suptitle("bin size: {} ms".format(1000/fs))
 
     return corr_mat
 
@@ -111,7 +111,7 @@ def plotCorrelationMatrix(colors=ut.COLORS, **args):
         f1.subplots_adjust(right=0.8)
         cbar_ax = f1.add_axes([0.85, 0.15, 0.05, 0.7])
         f1.colorbar(im, cax=cbar_ax)
-        f1.suptitle("samples per sec {}".format(fs))
+        f1.suptitle("bin size: {} ms".format(1000/fs))
         f1.tight_layout()
 
         return corr_mat
