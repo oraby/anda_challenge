@@ -16,6 +16,7 @@ log = logging.getLogger(__name__)
 list_of_data_sets = ['blue', 'green', 'grey', 'orange', 'purple', 'red']
 COLORS = list_of_data_sets # Creating an alias for clarity
 trial_events = ['TS-ON', 'CUE-ON', 'GO-ON', 'SR', 'RW-ON']
+trial_types = ['PGHF','PGLF','SGLF','SGLF']
 DUMP_DIR="dumps"
 PLOTS_DIR="plots"
 
