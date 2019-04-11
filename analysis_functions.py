@@ -15,13 +15,6 @@ def spike_counts(all_data, color):
 	return spikes_across_units, spikes_across_time
 
 
-def exp_func(x, a, b, c):
-	return a * np.exp(-b * x) + c
-
-def gamma_func(x, a, b, c, d, e):
-	res = e * gamma.pdf(x, a, loc=0, scale=c) + d
-	return res
-
 
 def exp_func(x, a, b, c):
 	res = a * expon.cdf(x, loc=0, scale=b) + c
@@ -36,6 +29,21 @@ def compute_isi_fits(all_data):
 	print('Performing the ISI fitting analysis')
 
 	plt.xkcd()
+
+	plt.figure(figsize=(15, 10))
+	for d in all_data:
+		bins = np.linspace(0, 0.2, 200)
+		# bins = 2500
+		h = plt.hist(all_data[d]['isi'], histtype='step', density=1, cumulative=False, bins=bins, label=d, color=d)
+	# plt.xlim(0, 0.1)
+# 	plt.ylim(1.e0, None)
+	plt.legend(loc='best')
+	plt.savefig('plots/isi_overview.pdf')
+	plt.savefig('plots/isi_overview.png')
+	plt.show()
+
+
+
 	plt.figure(figsize=(10, 10))
 	for d in all_data:
 		bins = np.linspace(0, 0.1, 100)
