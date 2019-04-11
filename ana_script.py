@@ -4,6 +4,7 @@ import utils as ut
 from analysis_functions import compute_isi_fits
 from correlation_matrix import plotCorrelationMatrix, plotCorrelationByDistance
 from complexity import complexity
+from trff import ff_wrapper
 
 
 all_data = ut._all_data
@@ -36,7 +37,8 @@ fns = [
   (plotCorrelationMatrix, [ut.list_of_data_sets], {'fs': 50, 'win_size': 0}),
   (plotCorrelationMatrix, [ut.list_of_data_sets], {'fs': 500, 'win_size': 0}),
   (plotCorrelationByDistance, [ut.list_of_data_sets], {'fs': 50, 'win_size': 0}),
-  (plotCorrelationByDistance, [ut.list_of_data_sets], {'fs': 500, 'win_size': 0})
+  (plotCorrelationByDistance, [ut.list_of_data_sets], {'fs': 500, 'win_size': 0}),
+  (ff_wrapper, [ut.list_of_data_sets,150, None],{})
 ]
 
 if __name__ == "__main__":
