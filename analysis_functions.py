@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from scipy.stats import chisquare
-from scipy.stats import gamma
+from scipy.stats import gamma, expon
 
 import neo
 import utils as ut
