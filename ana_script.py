@@ -2,6 +2,8 @@ import pickle
 import os
 import utils as ut
 from analysis_functions import compute_isi_fits
+from correlation_matrix import computeCorrelationMatrix
+from complexity import complexity
 
 
 all_data = ut._all_data
@@ -31,6 +33,8 @@ for color in ut.list_of_data_sets:
 
 fns = [
   (compute_isi_fits, [all_data], {}),
+  (computeCorrelationMatrix, [ut.list_of_data_sets], {'fs': 50, 'win_size': 0}),
+  (computeCorrelationMatrix, [ut.list_of_data_sets], {'fs': 500, 'win_size': 0})
 ]
 
 if __name__ == "__main__":

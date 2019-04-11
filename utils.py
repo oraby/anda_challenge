@@ -182,8 +182,7 @@ def calculate_single_trial_PSTH(R, fs=None, win_size=None, window='triangle'):
     if win_size is None:
         win_size = 10
     else:
-        samps_per_ms = int(fs * 1000)
-        win_size = int(np.ceil((1 / samps_per_ms) * win_size))
+        win_size = int(np.ceil(fs * (win_size/1000)))
 
     if win_size == 1:
         win_size += 1
@@ -202,7 +201,7 @@ def calculate_single_trial_PSTH(R, fs=None, win_size=None, window='triangle'):
 
     for trial in range(n_trials):
         r = R[trial, :, :]
-        r_psth = ss.filtfilt(window, 1, r, axis=-1)
+        r_psth = ss.lfilter(window, 1, r, axis=-1)
         R[trial, :, :] = r_psth
 
     # convert to spike / sec
@@ -359,3 +358,43 @@ def get_event_dict(block, fs):
             event_dict[ev][t, indexes] = 1
 
     return event_dict
+
+
+def trff(psth):
+    """
+    calculate time-resolved fano factor
+    """
+    trial_avg = np.mean(psth,axis=0)
+    trial_var = np.var(psth,axis=0)
+    FF = trial_var/trial_avg
+    return FF
+
+
+def population_trff(psth,fs = 1.e3, win_size = 10):
+    win_size = int(np.ceil(fs * (win_size/1000)))
+    ntrials = np.shape(psth)[0] 
+    nunits = np.shape(psth)[1]
+    ntimepoints = np.shape(psth)[2]
+    ff = np.zeros((ntimepoints,nunits))
+    # calculate time-resolved FF for each unit
+    for i in range(nunits):
+        ff[:,i] = trff(psth[:,i,:])
+    
+    # cut 500ms from beginning and 1500ms from end
+    # to take care of edge effects
+    ff = ff[win_size/2:-win_size/2]
+    # replace nans with 0
+    #ff[np.isnan(ff)]=0 
+    # average across units:
+    pop_trff = np.nanmean(ff,axis=1)
+    
+
+    # plotting
+    
+    plt.figure()
+    plt.plot(range(len(pop_trff)),pop_trff)
+    plt.title('Time Resolved Fano Factor')
+    plt.xlabel('Time from trial start [ms]')
+    plt.ylabel('Fano Factor')
+
+    return pop_trff, ff

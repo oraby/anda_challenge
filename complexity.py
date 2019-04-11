@@ -1,8 +1,7 @@
 
-def complexity(color, trial, bin_size):
+def complexity(color, trial, bin_size, save_figures = True):
     """
-    Give all_data, color as a string, trial as a scalar, bins as a scalar, and path_to_misc as the full path to
-    wherever you have SGexercises/misc.py
+    Give all_data, color as a string, trial as a scalar, bins as a scalar, default is save_figures = True.
     Plots: raster plot, spike counts per bin (in ms), the complexity distribution for that bin size,
     complexity distribution for data vs. surrogates, then substracts the two from each other. Finally, three plots
     are created of complexity distributions for data, surrogates, and their difference, scanning across bin sizes
@@ -33,10 +32,16 @@ def complexity(color, trial, bin_size):
     #plt.bar(range(len(A)), A, color='r', label='amplitude distrib.')
     plt.plot(complexity_cpp.times, complexity_cpp, label='complexity distrib.')
     plt.ylim([0, 0.25])
+    plt.xlim([0, 30])
     plt.xlabel('complexity', size=12)
     plt.ylabel('probability', size=12)
     plt.suptitle('train', size=14)
     plt.legend()
+    if save_figures:
+        complexity_png = 'plots/complexity_bin' + str(bin_size) + '_color_' + str(color) + '.png'
+        complexity_pdf = 'plots/complexity_bin' + str(bin_size) + '_color_' + str(color) + '.pdf'
+        plt.savefig(complexity_png)
+        plt.savefig(complexity_pdf)
 
     # generation of surrogates
     surr_sts = []
@@ -54,13 +59,21 @@ def complexity(color, trial, bin_size):
     plt.plot(complexity_cpp.times, complexity_cpp, color='blue', label="corr'd")
     plt.plot(complexity_surr.times, complexity_surr, color='red', label="surrogate")
     plt.xlabel('complexity')
+    plt.xlim([0, 30])
     plt.ylabel('probability')
     plt.legend()
 
     plt.subplot(1,2,2)
     plt.plot(complexity_cpp.times, diff_complexity)
     plt.xlabel('complexity')
+    plt.xlim([0, 30])
     plt.ylabel('probability diff.')
+    if save_figures:
+        complexity_surr_png = 'plots/complexity_surr' + str(bin_size) + '_color_' + str(color) + '.png'
+        complexity_surr_pdf = 'plots/complexity_surr' + str(bin_size) + '_color_' + str(color) + '.pdf'
+        plt.savefig(complexity_surr_png)
+        plt.savefig(complexity_surr_pdf)
+
     plt.show()
 
     # computation of the complexity distributions of CPP and surrogates for different binsizes
@@ -107,7 +120,8 @@ def complexity(color, trial, bin_size):
     plt.yticks(binsizes[0:-1:3].magnitude)
     plt.ylabel('Binsize')
     plt.xlabel('Complexity')
-    plt.xlim([0,complexity_cpp_matrix.T.shape[1]])
+    #plt.xlim([0,complexity_cpp_matrix.T.shape[1]])
+    plt.xlim([0, 30])
     plt.ylim([0,complexity_cpp_matrix.T.shape[0]])
     plt.ylim([binsizes[0], binsizes[-1]])
 
@@ -119,7 +133,8 @@ def complexity(color, trial, bin_size):
     plt.xlabel('Complexity')
     plt.tick_params(length=2, direction='out', pad=0)
     plt.yticks(binsizes[0:-1:3].magnitude)
-    plt.xlim([0,complexity_cpp_matrix.T.shape[1]])
+    #plt.xlim([0,complexity_cpp_matrix.T.shape[1]])
+    plt.xlim([0, 30])
     plt.ylim([0,complexity_cpp_matrix.T.shape[0]])
     plt.ylim([binsizes[0], binsizes[-1]])
 
@@ -132,11 +147,19 @@ def complexity(color, trial, bin_size):
     plt.xlabel('Complexity')
     #plt.yticks(binsizes[0:-1:3].magnitude)
     plt.tick_params(length=2, direction='out', pad=0)
-    plt.xlim([0,complexity_cpp_matrix.T.shape[1]])
+    #plt.xlim([0,complexity_cpp_matrix.T.shape[1]])
+    plt.xlim([0, 30])
     plt.ylim([0,complexity_cpp_matrix.T.shape[0]])
     plt.ylim([binsizes[0], binsizes[-1]])
+
+    if save_figures:
+        sliding_bin_png = 'plots/complexity_sliding_bin_' + str(color) + '.png'
+        sliding_bin_pdf = 'plots/complexity_sliding_bin_' + str(color) + '.pdf'
+        plt.savefig(sliding_bin_png)
+        plt.savefig(sliding_bin_pdf)
+
     plt.show()
 
 
 if __name__ == "__main__":
-    complexity("purple", 0, 2)
+    complexity("purple", 0, 2,save_figures = True)

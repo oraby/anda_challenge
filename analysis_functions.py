@@ -35,7 +35,7 @@ def gamma_func(x, a, c, d, e):
 def compute_isi_fits(all_data):
 	print('Performing the ISI fitting analysis')
 
-	#plt.xkcd()
+	plt.xkcd()
 	plt.figure(figsize=(10, 10))
 	for d in all_data:
 		bins = np.linspace(0, 0.1, 100)
@@ -66,7 +66,7 @@ def compute_isi_fits(all_data):
 		plt.bar(i, all_data[d]['exp_diff_fit'], color=d)
 	plt.ylabel(r'$L_2$ error')
 	plt.xticks([])
-	# plt.yticks([])
+	plt.yticks([])
 	plt.title('Exponential fit')
 	plt.tight_layout()
 	plt.savefig('plots/isi_poisson_fit.pdf')
@@ -78,7 +78,7 @@ def compute_isi_fits(all_data):
 		plt.bar(i, all_data[d]['gamma_diff_fit'], color=d)
 	plt.ylabel(r'$L_2$ error')
 	plt.xticks([])
-	# plt.yticks([])
+	plt.yticks([])
 	plt.title('Gamma fit')
 	plt.tight_layout()
 	plt.savefig('plots/isi_gamma_fit.pdf')
