@@ -50,5 +50,6 @@ else:
         (compute_dPCA, [ut.list_of_data_sets], {'fs': 100, 'win_size': 200}))
 
 if __name__ == "__main__":
-    for fn, args, kargs in fns[-1:]:
+    for fn, args, kargs in fns:
+        print("Running", fn.__name__)
         fn(*args, **kargs)
