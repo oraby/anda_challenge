@@ -30,8 +30,6 @@ def load_dataset(colors=list_of_data_sets, path=None):
     # breaking code
     if type(colors) == str:
         return_single = True
-        log.info('Use `load_dataset(["' + colors +'"])` instead of' + \
-                 '`load_dataset("' + colors +'")`')
         colors = [colors]
     else:
         return_single = False
