@@ -14,7 +14,7 @@ def complexity(color, trial, bin_size, save_figures = True):
     import misc
     import matplotlib.pyplot as plt
     import utils as ut
-    
+
     block = ut.load_dataset(color)
     train = block.segments[trial].spiketrains # segments is trials
 
@@ -42,7 +42,7 @@ def complexity(color, trial, bin_size, save_figures = True):
         complexity_pdf = 'plots/complexity_bin' + str(bin_size) + '_color_' + str(color) + '.pdf'
         plt.savefig(complexity_png)
         plt.savefig(complexity_pdf)
-    
+
     # generation of surrogates
     surr_sts = []
 
@@ -73,7 +73,7 @@ def complexity(color, trial, bin_size, save_figures = True):
         complexity_surr_pdf = 'plots/complexity_surr' + str(bin_size) + '_color_' + str(color) + '.pdf'
         plt.savefig(complexity_surr_png)
         plt.savefig(complexity_surr_pdf)
-    
+
     plt.show()
 
     # computation of the complexity distributions of CPP and surrogates for different binsizes
@@ -151,15 +151,15 @@ def complexity(color, trial, bin_size, save_figures = True):
     plt.xlim([0, 30])
     plt.ylim([0,complexity_cpp_matrix.T.shape[0]])
     plt.ylim([binsizes[0], binsizes[-1]])
-    
+
     if save_figures:
         sliding_bin_png = 'plots/complexity_sliding_bin_' + str(color) + '.png'
         sliding_bin_pdf = 'plots/complexity_sliding_bin_' + str(color) + '.pdf'
         plt.savefig(sliding_bin_png)
         plt.savefig(sliding_bin_pdf)
-    
+
     plt.show()
 
 
 if __name__ == "__main__":
-    complexity("purple", 0, 2,True)
+    complexity("purple", 0, 2,save_figures = True)
