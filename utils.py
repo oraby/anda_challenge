@@ -181,7 +181,7 @@ def calculate_single_trial_PSTH(R, fs=None, win_size=None, window='triangle'):
     if win_size is None:
         win_size = 10
     else:
-        samps_per_ms = int(fs * 1000)
+        samps_per_ms = int(np.ceil(fs / 1000))
         win_size = int(np.ceil((1 / samps_per_ms) * win_size))
 
     if win_size == 1:
