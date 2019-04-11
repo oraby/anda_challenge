@@ -200,7 +200,7 @@ def calculate_single_trial_PSTH(R, fs=None, win_size=None, window='triangle'):
 
     for trial in range(n_trials):
         r = R[trial, :, :]
-        r_psth = ss.filtfilt(window, 1, r, axis=-1)
+        r_psth = ss.lfilter(window, 1, r, axis=-1)
         R[trial, :, :] = r_psth
 
     # convert to spike / sec
