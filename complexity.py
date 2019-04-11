@@ -1,5 +1,5 @@
 
-def complexity(all_data,color, trial, bin_size):
+def complexity(color, trial, bin_size):
     """
     Give all_data, color as a string, trial as a scalar, bins as a scalar, and path_to_misc as the full path to
     wherever you have SGexercises/misc.py
@@ -8,23 +8,17 @@ def complexity(all_data,color, trial, bin_size):
     are created of complexity distributions for data, surrogates, and their difference, scanning across bin sizes
     from 0 to 30 ms.
     """
-    import sys
     import numpy
     import quantities as pq
-    import elephant.spike_train_correlation as corr
     import elephant.spike_train_surrogates as surr
     import elephant.statistics as stats
-    import elephant.conversion as conv
-    import elephant.unitary_event_analysis as ue
-    import elephant.spike_train_generation as stocmod
-    import elephant.spade as spade
     import misc
     import matplotlib.pyplot as plt
-    import neo
     import utils as ut
 
-    train = all_data[color]['neo_block'].segments[trial].spiketrains # segments is trials
-    
+    block = ut.load_dataset([color])[0]
+    train = block.segments[trial].spiketrains # segments is trials
+
     binsize = bin_size * pq.ms
     pophist = stats.time_histogram(train, binsize, binary=True)
     complexity_cpp = stats.complexity_pdf(train, binsize)
@@ -141,3 +135,8 @@ def complexity(all_data,color, trial, bin_size):
     plt.xlim([0,complexity_cpp_matrix.T.shape[1]])
     plt.ylim([0,complexity_cpp_matrix.T.shape[0]])
     plt.ylim([binsizes[0], binsizes[-1]])
+    plt.show()
+
+
+if __name__ == "__main__":
+    complexity("purple", 0, 2)
