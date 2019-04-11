@@ -10,6 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def compute_dPCA(colors=ut.list_of_data_sets):
+    print("Loading datasets")
     data = ut.load_dataset(colors)
     for color in colors:
         print("analyzing dataset {}".format(color))
