@@ -35,7 +35,7 @@ def gamma_func(x, a, c, d, e):
 def compute_isi_fits(all_data):
 	print('Performing the ISI fitting analysis')
 
-	plt.xkcd()
+	#plt.xkcd()
 	plt.figure(figsize=(10, 10))
 	for d in all_data:
 		bins = np.linspace(0, 0.1, 100)
