@@ -41,7 +41,7 @@ fns = [
   (plotCorrelationByDistance, [ut.list_of_data_sets], {'fs': 500, 'win_size': 0}),
   (plotRastor, [], {}),
   (plotPSTH, [], {}),
-  (ff_wrapper, [ut.list_of_data_sets,150, None],{}),
+  (ff_wrapper, [ut.list_of_data_sets,250, None],{}),
 ]
 try: # Not all of us has dPCA installed, it needs manual installation
     from dPCA_script import compute_dPCA
