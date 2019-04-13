@@ -24,10 +24,16 @@ def compute_dPCA(colors=ut.list_of_data_sets, fs=100, win_size=200):
         trial_type = [block.segments[i].annotations['belongs_to_trialtype']  for i in range(0, ntrials)]
         un_types = np.unique(trial_type)
 
-        R = ut.calculate_single_trial_PSTH(R, fs=fs, win_size=win)
-        s = int(np.ceil((win / 2) * (1 / fs)))
-        e = int(R.shape[-1] - (1 / (1 / fs))) - s
         time = np.linspace(0, 5, R.shape[-1])
+        if win_size != 0:
+            R = ut.calculate_single_trial_PSTH(R, fs=fs, win_size=win)
+            win = int(np.ceil(fs * (win_size/1000)))
+            s = int(np.ceil((win / 2) * (1 / fs)))
+            e = int(R.shape[-1] - (1 / (1 / fs))) - s
+        else:
+            s = 0
+            e = int(R.shape[-1] - (1 / (1 / fs)))
+
         time = time[s:e]
 
         for i, t in enumerate(un_types):
@@ -40,7 +46,7 @@ def compute_dPCA(colors=ut.list_of_data_sets, fs=100, win_size=200):
 
         R_psth = R_psth.transpose(1, 0, 2)
 
-        dpca = dPCA.dPCA(labels='st', join= {'st': ['s', 'st']}, n_components=nunits, regularizer=None)
+        dpca = dPCA.dPCA(labels='st', join= {'st': ['s', 'st']}, n_components=nunits-50, regularizer=None)
 
         # fit and project the mean PSTHs back out
         R_transform = dpca.fit_transform(R_psth)
@@ -51,16 +57,18 @@ def compute_dPCA(colors=ut.list_of_data_sets, fs=100, win_size=200):
         for ev in ut.trial_events:
             events[ev] = np.argwhere(ev_times[ev][0, :]==1)[0][0] / fs
 
-        f, ax = plt.subplots(2, 1)
+
         for i, comp in enumerate(R_transform.keys()):
             # plot first PC for each marginalized component
-            ax[i].set_title(comp + ", var explained: " + str(round(dpca.explained_variance_ratio_[comp][0]*100, 2)))
-            ax[i].plot(time, R_transform[comp][0, :, :].T)
-            ax[i].legend(un_types)
-            for ev in ut.trial_events:
-                ax[i].axvline(events[ev], lw=2, color='k')
-        f.suptitle(color)
-        f.tight_layout()
+            f, ax = plt.subplots(4, 1)
+            for j in range(0, 4):
+                ax[j].set_title(comp + ", var explained: " + str(round(dpca.explained_variance_ratio_[comp][j]*100, 2)))
+                ax[j].plot(time, R_transform[comp][j, :, :].T)
+                ax[j].legend(un_types)
+                for ev in ut.trial_events:
+                    ax[j].axvline(events[ev], lw=2, color='k')
+            f.suptitle(color)
+            f.tight_layout()
 
         f, ax = plt.subplots(1, 1)
         c = ['black', 'gold']
@@ -74,6 +82,8 @@ def compute_dPCA(colors=ut.list_of_data_sets, fs=100, win_size=200):
         ax.set_title(color)
         f.tight_layout()
 
+    return dpca
+
 
 if __name__ == "__main__":
-    compute_dPCA()
+    dpca = compute_dPCA(colors=['grey'], fs=4, win_size=0)

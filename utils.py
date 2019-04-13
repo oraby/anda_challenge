@@ -142,7 +142,8 @@ def rasterize_data(data_block, sf = 1.e3):
             if len(index) > 0:
                 if index[-1] >= spike_matrix.shape[-1]:
                     index = index[:-1]
-            spike_matrix[i,j,index] = 1
+                for tind in np.unique(index):
+                    spike_matrix[i, j, tind] = np.sum(index==tind)
 
     return spike_matrix
 
@@ -358,5 +359,3 @@ def get_event_dict(block, fs):
             event_dict[ev][t, indexes] = 1
 
     return event_dict
-
-
