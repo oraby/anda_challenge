@@ -86,4 +86,4 @@ def compute_dPCA(colors=ut.list_of_data_sets, fs=100, win_size=200):
 
 
 if __name__ == "__main__":
-    dpca = compute_dPCA(colors=['grey'], fs=4, win_size=0)
+    dpca = compute_dPCA(colors=['grey'], fs=500, win_size=250)
